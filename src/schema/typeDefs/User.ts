@@ -6,13 +6,13 @@ import {
 } from "graphql";
 import { TransactionType } from "./Transaction";
 
-export const UserType = new GraphQLObjectType({
+export const UserType: GraphQLObjectType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
     id: { type: GraphQLID },
     username: { type: GraphQLString },
     email: { type: GraphQLString },
     password: { type: GraphQLString },
-    expenses: { type: new GraphQLList(TransactionType) },
+    transactions: { type: new GraphQLList(TransactionType) },
   }),
 });

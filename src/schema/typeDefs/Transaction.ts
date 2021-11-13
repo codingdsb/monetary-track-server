@@ -5,8 +5,9 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from "graphql";
+import { UserType } from "./User";
 
-export const TransactionType = new GraphQLObjectType({
+export const TransactionType: GraphQLObjectType = new GraphQLObjectType({
   name: "Transaction",
   fields: () => ({
     id: { type: GraphQLID },
@@ -15,10 +16,11 @@ export const TransactionType = new GraphQLObjectType({
     date: { type: GraphQLString },
     with: { type: GraphQLString },
     transaction_type: { type: TransactionTypeEnum },
+    user: { type: UserType },
   }),
 });
 
-const TransactionTypeEnum = new GraphQLEnumType({
+const TransactionTypeEnum: GraphQLEnumType = new GraphQLEnumType({
   name: "TransactionType",
   values: {
     INCOME: { value: "income" },

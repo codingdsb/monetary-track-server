@@ -5,6 +5,8 @@ import { PORT, __prod__ } from "./constants";
 import { graphqlHTTP } from "express-graphql";
 import { schema } from "./schema";
 import playGround from "graphql-playground-middleware-express";
+import User from "./entities/User";
+import { Transaction } from "./entities/Transaction";
 
 const main = async () => {
   await createConnection({
@@ -12,6 +14,7 @@ const main = async () => {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    entities: [User, Transaction],
     logging: !__prod__,
   });
 
