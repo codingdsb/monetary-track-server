@@ -11,11 +11,7 @@ import Transaction from "./entities/Transaction";
 const main = async () => {
   await createConnection({
     type: "postgres",
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    url: process.env.DATABASE_URL,
     entities: [User, Transaction],
     logging: !__prod__,
     synchronize: true,
