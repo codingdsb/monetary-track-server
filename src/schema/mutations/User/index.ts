@@ -62,18 +62,11 @@ export const REGISTER = {
       throw new Error("Invalid email");
     }
 
-    await User.insert({
-      username: args.username,
-      email: args.email,
-      password: bcrypt.hashSync(args.password, 10),
-    });
-
-    const user = await User.findOne({
-      where: {
-        username: args.username,
-        email: args.email,
-      },
-    });
+    const user = new User();
+    user.username = args.username;
+    user.email = args.email;
+    user.password = bcrypt.hashSync(args.password, 10);
+    await user.save();
 
     const token = jwt.sign({ id: user?.id }, JWT_SECRET as Secret);
 

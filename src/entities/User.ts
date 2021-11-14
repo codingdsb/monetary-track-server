@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Transaction } from "./Transaction";
+import Transaction from "./Transaction";
 
 @Entity()
 export default class User extends BaseEntity {
@@ -21,6 +21,8 @@ export default class User extends BaseEntity {
   @Column()
   password: string;
 
-  @OneToMany(() => Transaction, (transaction) => transaction.user)
+  @OneToMany(() => Transaction, (transaction) => transaction.user, {
+    cascade: true,
+  })
   transactions: Transaction[];
 }

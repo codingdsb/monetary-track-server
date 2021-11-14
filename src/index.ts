@@ -6,7 +6,7 @@ import { graphqlHTTP } from "express-graphql";
 import { schema } from "./schema";
 import playGround from "graphql-playground-middleware-express";
 import User from "./entities/User";
-import { Transaction } from "./entities/Transaction";
+import Transaction from "./entities/Transaction";
 
 const main = async () => {
   await createConnection({

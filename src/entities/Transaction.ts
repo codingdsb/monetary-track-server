@@ -13,7 +13,7 @@ export enum TransactionType {
 }
 
 @Entity()
-export class Transaction extends BaseEntity {
+export default class Transaction extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -24,7 +24,7 @@ export class Transaction extends BaseEntity {
   description: string;
 
   @Column()
-  date: Date;
+  date: string;
 
   @Column()
   with: string;
@@ -34,8 +34,10 @@ export class Transaction extends BaseEntity {
     enum: TransactionType,
     default: TransactionType.EXPENSE,
   })
-  transaction_type: string;
+  transaction_type: TransactionType;
 
-  @ManyToOne(() => User, (user) => user.transactions)
+  @ManyToOne(() => User, (user) => user.transactions, {
+    onDelete: "CASCADE",
+  })
   user: User;
 }

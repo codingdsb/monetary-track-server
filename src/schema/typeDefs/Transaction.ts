@@ -20,7 +20,7 @@ export const TransactionType: GraphQLObjectType = new GraphQLObjectType({
   }),
 });
 
-const TransactionTypeEnum: GraphQLEnumType = new GraphQLEnumType({
+export const TransactionTypeEnum: GraphQLEnumType = new GraphQLEnumType({
   name: "TransactionType",
   values: {
     INCOME: { value: "income" },
