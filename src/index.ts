@@ -15,6 +15,7 @@ const main = async () => {
     entities: [User, Transaction],
     logging: !__prod__,
     synchronize: true,
+    ssl: __prod__,
   });
 
   const app = express();
