@@ -1,6 +1,10 @@
 import { GraphQLObjectType, GraphQLSchema } from "graphql";
-import { ADD_TRANSACTION, REGISTER } from "./mutations";
-import { DELETE_TRANSACTION } from "./mutations/Transaction";
+import {
+  ADD_TRANSACTION,
+  REGISTER,
+  EDIT_TRANSACTION,
+  DELETE_TRANSACTION,
+} from "./mutations";
 import { LOGIN, GET_USER_DETAILS_BY_ID } from "./queries";
 
 const RootQueryType = new GraphQLObjectType({
@@ -16,6 +20,7 @@ const MutationType = new GraphQLObjectType({
   fields: {
     register: REGISTER,
     addTransaction: ADD_TRANSACTION,
+    editTransaction: EDIT_TRANSACTION,
     deleteTransaction: DELETE_TRANSACTION,
   },
 });

@@ -3,7 +3,7 @@ import {
   TransactionType,
   TransactionTypeEnum,
 } from "../../typeDefs/Transaction";
-import { IAddTransaction, IDeleteTransaction } from "./types";
+import { IAddTransaction, IDeleteTransaction, IEditTransaction } from "./types";
 import jwt, { Secret } from "jsonwebtoken";
 import { JWT_SECRET } from "../../../constants";
 import Transaction from "../../../entities/Transaction";
@@ -85,18 +85,11 @@ export const DELETE_TRANSACTION = {
     }
 
     // check if the transaction belongs to the user
-    const isOwner = await transactionRepository.findOne({
+    const transaction = await transactionRepository.findOne({
       id: args.transaction_id,
       user: user,
     });
 
-    if (!isOwner) {
-      throw new Error("You are not the owner of this transaction");
-    }
-
-    const transaction = await transactionRepository.findOne({
-      id: args.transaction_id,
-    });
     if (!transaction) {
       throw new Error("Transaction not found");
     }
@@ -104,5 +97,71 @@ export const DELETE_TRANSACTION = {
     const deletedTransaction = await transactionRepository.remove(transaction);
 
     return deletedTransaction;
+  },
+};
+
+export const EDIT_TRANSACTION = {
+  type: TransactionType,
+  args: {
+    auth_token: { type: GraphQLString },
+    transaction_id: { type: GraphQLID },
+    amount: { type: GraphQLFloat },
+    description: { type: GraphQLString },
+    date: { type: GraphQLString },
+    with: { type: GraphQLString },
+    transaction_type: { type: TransactionTypeEnum },
+  },
+  async resolve(_: any, args: IEditTransaction) {
+    if (!args.transaction_id || !args.auth_token) {
+      throw new Error("Please provide all the required fields");
+    }
+
+    const userRepository = getRepository(User);
+    const transactionRepository = getRepository(Transaction);
+
+    const decoded = jwt.verify(args.auth_token, JWT_SECRET as Secret);
+    if (!decoded) {
+      throw new Error("Invalid token");
+    }
+    const { id } = decoded as { id: string };
+
+    const user = await userRepository.findOne({ id });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // check if the transaction belongs to the user
+    const transaction = await transactionRepository.findOne({
+      id: args.transaction_id,
+      user: user,
+    });
+
+    if (!transaction) {
+      throw new Error("Transaction not found");
+    }
+
+    if (args.amount) {
+      transaction.amount = args.amount;
+    }
+
+    if (args.description) {
+      transaction.description = args.description;
+    }
+
+    if (args.date) {
+      transaction.date = args.date;
+    }
+
+    if (args.with) {
+      transaction.with = args.with;
+    }
+
+    if (args.transaction_type) {
+      transaction.transaction_type = args.transaction_type;
+    }
+
+    const editedTransaction = await transactionRepository.save(transaction);
+
+    return editedTransaction;
   },
 };
