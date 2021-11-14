@@ -16,7 +16,7 @@ const main = async () => {
     logging: !__prod__,
     synchronize: true,
     ssl: {
-      rejectUnauthorized: __prod__,
+      rejectUnauthorized: !__prod__,
     },
   });
 
