@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "postinstall": "tsc -p ."
+    "postinstall": "tsc -p .",
+    "build": "tsc -p ."
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
