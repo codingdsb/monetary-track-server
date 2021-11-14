@@ -8,3 +8,8 @@ export interface IAddTransaction {
   with: string;
   transaction_type: TransactionTypeEnum;
 }
+
+export interface IDeleteTransaction {
+  auth_token: string;
+  transaction_id: string;
+}

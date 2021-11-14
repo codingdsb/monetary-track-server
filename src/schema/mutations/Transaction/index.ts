@@ -1,9 +1,9 @@
-import { GraphQLFloat, GraphQLString } from "graphql";
+import { GraphQLFloat, GraphQLID, GraphQLString } from "graphql";
 import {
   TransactionType,
   TransactionTypeEnum,
 } from "../../typeDefs/Transaction";
-import { IAddTransaction } from "./types";
+import { IAddTransaction, IDeleteTransaction } from "./types";
 import jwt, { Secret } from "jsonwebtoken";
 import { JWT_SECRET } from "../../../constants";
 import Transaction from "../../../entities/Transaction";
@@ -56,5 +56,53 @@ export const ADD_TRANSACTION = {
     await transactionRepository.save(transaction);
 
     return transaction;
+  },
+};
+
+export const DELETE_TRANSACTION = {
+  type: TransactionType,
+  args: {
+    auth_token: { type: GraphQLString },
+    transaction_id: { type: GraphQLID },
+  },
+  async resolve(_: any, args: IDeleteTransaction) {
+    if (!args.transaction_id || !args.auth_token) {
+      throw new Error("Please provide all the required fields");
+    }
+
+    const userRepository = getRepository(User);
+    const transactionRepository = getRepository(Transaction);
+
+    const decoded = jwt.verify(args.auth_token, JWT_SECRET as Secret);
+    if (!decoded) {
+      throw new Error("Invalid token");
+    }
+    const { id } = decoded as { id: string };
+
+    const user = await userRepository.findOne({ id });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // check if the transaction belongs to the user
+    const isOwner = await transactionRepository.findOne({
+      id: args.transaction_id,
+      user: user,
+    });
+
+    if (!isOwner) {
+      throw new Error("You are not the owner of this transaction");
+    }
+
+    const transaction = await transactionRepository.findOne({
+      id: args.transaction_id,
+    });
+    if (!transaction) {
+      throw new Error("Transaction not found");
+    }
+
+    const deletedTransaction = await transactionRepository.remove(transaction);
+
+    return deletedTransaction;
   },
 };
