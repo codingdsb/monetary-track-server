@@ -1,10 +1,12 @@
 import { GraphQLString } from "graphql";
 import User from "../../../entities/User";
+import Transaction from "../../../entities/Transaction";
 import { AuthPayloadType } from "../../typeDefs/AuthPayload";
 import { IRegister } from "./types";
 import bcrypt from "bcryptjs";
 import jwt, { Secret } from "jsonwebtoken";
 import { JWT_SECRET } from "../../../constants";
+import { getRepository } from "typeorm";
 
 export const REGISTER = {
   type: AuthPayloadType,
@@ -62,17 +64,26 @@ export const REGISTER = {
       throw new Error("Invalid email");
     }
 
+    const userRepository = getRepository(User);
+    const transactionRepository = getRepository(Transaction);
+
     const user = new User();
     user.username = args.username;
     user.email = args.email;
     user.password = bcrypt.hashSync(args.password, 10);
-    await user.save();
+    await userRepository.save(user);
+
+    // get user's transactions
+    const transactions = await transactionRepository.find({ user });
 
     const token = jwt.sign({ id: user?.id }, JWT_SECRET as Secret);
 
     return {
       token,
-      user,
+      user: {
+        ...user,
+        transactions,
+      },
     };
   },
 };
