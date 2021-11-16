@@ -82,7 +82,7 @@ export const REGISTER = {
       token,
       user: {
         ...user,
-        transactions,
+        transactions: transactions ? transactions : [],
       },
     };
   },
